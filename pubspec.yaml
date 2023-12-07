@@ -1,0 +1,44 @@
+name: survey_bullyng
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.19.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  sidebarx: ^0.16.2
+  youtube_player_flutter: ^8.1.2
+  provider: ^6.1.1
+  http: ^0.13.5
+  youtube_player_iframe: ^2.2.2
+  shared_preferences: ^2.2.2
+
+
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.2
+
+flutter:
+  uses-material-design: true
+  assets:
+   - assets/images/tut wuri.png
+   - assets/images/smp.png
+   - assets/images/homea.png
+   - assets/images/homeb.png
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/font/Poppins-Regular.ttf
+        # - asset: assets/font/Poppins-MediumItalic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
