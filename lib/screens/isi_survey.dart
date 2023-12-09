@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:survey_bullyng/provider/murid.dart';
 import 'package:survey_bullyng/screens/laporan_hasil.dart';
+import 'package:survey_bullyng/screens/murid_home.dart';
 
 // void main() {
 //   runApp(MaterialApp(
@@ -25,6 +28,7 @@ class _SurveyPageState extends State<SurveyPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(Provider.of<MuridProvider>(context).murid);
     return Scaffold(
       appBar: AppBar(
         title: Text('Survey Bullying'),

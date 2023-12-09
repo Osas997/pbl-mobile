@@ -8,8 +8,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: true);
-
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: Color(0xfff4efef),
       body: Center(
@@ -38,7 +37,7 @@ class LoginPage extends StatelessWidget {
               ),
             ),
             Text(
-              "Please enter your details",
+              "Please enter your detail",
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w300,
@@ -47,11 +46,10 @@ class LoginPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
             Form(
-              key: authProvider
-                  .formKey, // Access the form key from the AuthProvider
+              key: authProvider.formKey,
               child: Column(
                 children: [
-                  Padding(
+                  Container(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: TextFormField(
                       onChanged: (value) {
@@ -59,7 +57,7 @@ class LoginPage extends StatelessWidget {
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Username Tidak Boleh Kosong';
+                          return 'Please enter your username';
                         }
                         return null;
                       },
@@ -72,7 +70,7 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 10),
-                  Padding(
+                  Container(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: TextFormField(
                       onChanged: (value) {
@@ -81,7 +79,7 @@ class LoginPage extends StatelessWidget {
                       obscureText: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Password Tidak Boleh Kosong';
+                          return 'Please enter your password';
                         }
                         return null;
                       },
@@ -100,24 +98,28 @@ class LoginPage extends StatelessWidget {
             Container(
               width: 200,
               height: 50,
-              child: ElevatedButton(
-                onPressed: () async {
-                  if (authProvider.formKey.currentState!.validate()) {
-                    await authProvider.login(context);
-                    if (authProvider.isLoggedIn) {
-                      Navigator.of(context)
-                          .pushReplacementNamed(MuridHome.routeName);
-                    }
-                  }
+              child: Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  return ElevatedButton(
+                    onPressed: () async {
+                      if (authProvider.formKey.currentState!.validate()) {
+                        await auth.login(context);
+                        if (auth.isLoggedIn) {
+                          Navigator.of(context)
+                              .pushReplacementNamed(MuridHome.routeName);
+                        }
+                      }
+                    },
+                    child: auth.isLoading
+                        ? CircularProgressIndicator()
+                        : Text('Login'),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  );
                 },
-                child: authProvider.isLoading
-                    ? CircularProgressIndicator()
-                    : Text('Login'),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
               ),
             ),
           ],

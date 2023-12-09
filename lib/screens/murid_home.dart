@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:survey_bullyng/provider/auth_provider.dart';
 import 'package:survey_bullyng/screens/isi_biodata.dart';
+import 'package:survey_bullyng/screens/login_page.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MuridHome extends StatelessWidget {
   const MuridHome({Key? key}) : super(key: key);
@@ -11,7 +11,7 @@ class MuridHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: true);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     print(authProvider.token);
     return Scaffold(
       appBar: AppBar(
@@ -19,15 +19,27 @@ class MuridHome extends StatelessWidget {
         actions: [
           Container(
             margin: EdgeInsets.all(10),
-            child: ElevatedButton(
-              onPressed: () {},
-              child: Text('Logout', style: TextStyle(color: Colors.black)),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-              ),
+            child: Consumer<AuthProvider>(
+              builder: (context, auth, _) {
+                return ElevatedButton(
+                  onPressed: () async {
+                    await auth.logout(context);
+                    if (!auth.isLoggedIn) {
+                      Navigator.of(context)
+                          .pushReplacementNamed(LoginPage.routeName);
+                    }
+                  },
+                  child: auth.isLoading
+                      ? CircularProgressIndicator()
+                      : Text('Logout'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                );
+              },
             ),
           )
         ],

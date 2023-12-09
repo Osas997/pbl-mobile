@@ -10,7 +10,9 @@ class AuthProvider with ChangeNotifier {
   String _password = '';
   String _token = '';
 
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+
+  GlobalKey<FormState> get formKey => _formKey;
 
   bool get isLoggedIn => _isLoggedIn;
   bool get isLoading => _isLoading;
@@ -40,7 +42,7 @@ class AuthProvider with ChangeNotifier {
       String urlUsb = 'http://192.168.1.14:8000/api/login';
 
       final response = await http.post(
-        Uri.parse(urlUsb),
+        Uri.parse(urlLocalhost),
         body: data,
       );
 
@@ -76,6 +78,50 @@ class AuthProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> logout(BuildContext context) async {
+    try {
+      String logoutUrl = 'http://localhost:8000/api/logout';
+
+      final response = await http.post(
+        Uri.parse(logoutUrl),
+        headers: {
+          'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Clear the token and set isLoggedIn to false
+        _token = '';
+        _isLoggedIn = false;
+        notifyListeners();
+
+        // Tampilkan Snackbar notifikasi berhasil logout
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Logout successful!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        // Handle logout error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to logout'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (error) {
+      // Handle logout error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error during logout'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 }
