@@ -14,9 +14,10 @@ dependencies:
   provider: ^6.1.1
   http: ^0.13.5
   youtube_player_iframe: ^2.2.2
-
-
-
+  shared_preferences: ^2.0.18
+  introduction_screen: ^3.1.12
+  flutter_easyloading: ^3.0.5
+  another_flushbar: ^1.12.30
 
 dev_dependencies:
   flutter_test:
@@ -26,10 +27,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-   - assets/images/tut wuri.png
-   - assets/images/smp.png
-   - assets/images/homea.png
-   - assets/images/homeb.png
+    - assets/images/tut wuri.png
+    - assets/images/smp.png
+    - assets/images/homea.png
+    - assets/images/homeb.png
+    - assets/images/onboarding-1.png
+    - assets/images/onboarding-2.jpeg
+    - assets/images/onboarding-3.jpeg
   fonts:
     - family: Poppins
       fonts:

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:survey_bullyng/helpers/user_info.dart';
-import 'package:survey_bullyng/screens/laporan_korban.dart';
+import 'package:survey_bullyng/screens/laporan_hasil.dart';
 
-class LaporanHasil extends StatelessWidget {
-  const LaporanHasil({Key? key}) : super(key: key);
+class LaporanKorban extends StatelessWidget {
+  const LaporanKorban({Key? key}) : super(key: key);
 
-  static const routeName = '/laporan-hasil';
+  static const routeName = '/laporan-korban';
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class LaporanHasil extends StatelessWidget {
             minHeight: MediaQuery.of(context).size.height,
           ),
           color: Colors.blue,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 70),
           child: Container(
             alignment: Alignment.center,
             decoration: BoxDecoration(
@@ -34,7 +34,6 @@ class LaporanHasil extends StatelessWidget {
                     Row(
                       children: [
                         Container(
-                          margin: EdgeInsets.only(top: 5),
                           child: IconButton(
                               onPressed: () {
                                 Navigator.pop(context);
@@ -53,11 +52,13 @@ class LaporanHasil extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).pushNamed(
-                                LaporanKorban.routeName,
+                                LaporanHasil.routeName,
                               );
                             },
-                            child: Text('Korban'),
+                            child: Text('Pelaku'),
                             style: ElevatedButton.styleFrom(
+                              // primary: Colors.white,
+                              textStyle: TextStyle(color: Colors.black),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
@@ -70,7 +71,7 @@ class LaporanHasil extends StatelessWidget {
                       width: 300,
                       margin: EdgeInsets.only(top: 30),
                       child: Text(
-                        'Hasil Inventory Potensi Menjadi Pelaku Bullying',
+                        'Hasil Inventory Potensi Menjadi Korban Bullying',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 12,
@@ -237,7 +238,7 @@ class LaporanHasil extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            data['skor_total_pelaku'].toString(),
+                            data['skor_total_korban'].toString(),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 30,
@@ -401,12 +402,12 @@ class LaporanHasil extends StatelessWidget {
                           ),
                           Row(
                             children: [
-                              if (data['skor_total_pelaku'] >= 35)
+                              if (data['skor_total_korban'] >= 35)
                                 Container(
                                   padding: EdgeInsets.only(left: 20),
                                   width: 300,
                                   child: Text(
-                                    '${data["murid"]["nama_murid"]} memiliki kecenderungan menjadi pelaku bullying yang tinggi Dan anda berpotensi tinggi menjadi pelaku bullying. Anda cenderung untuk melakukan Tindakan-tindakan yang mengarah pada perilaku kekerasan sehingga membuat korban anda merasa tersakiti dan tersiksa',
+                                    '${data["murid"]["nama_murid"]} memiliki kecenderungan menjadi korban bullying yang tinggi Dan anda berpotensi tinggi menjadi korban bullying.',
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.normal,
@@ -414,13 +415,13 @@ class LaporanHasil extends StatelessWidget {
                                     ),
                                   ),
                                 )
-                              else if (data['skor_total_pelaku'] >= 24 &&
-                                  data['skor_total_pelaku'] < 35)
+                              else if (data['skor_total_korban'] >= 24 &&
+                                  data['skor_total_korban'] < 35)
                                 Container(
                                   padding: EdgeInsets.only(left: 20),
                                   width: 300,
                                   child: Text(
-                                    '${data["murid"]["nama_murid"]} memiliki kecenderungan menjadi pelaku bullying yang sedang  Dan anda berpotensi sedang menjadi pelaku bullying. Sebagian Tindakan anda mencerminkan perilaku bullying yang dapat membuat korban anda merasa tersakiti',
+                                    '${data["murid"]["nama_murid"]} memiliki kecenderungan menjadi korban bullying yang sedang  Dan anda berpotensi sedang menjadi korban bullying.',
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.normal,
@@ -433,7 +434,7 @@ class LaporanHasil extends StatelessWidget {
                                   padding: EdgeInsets.only(left: 20),
                                   width: 300,
                                   child: Text(
-                                    '${data["murid"]["nama_murid"]} memiliki kecenderungan menjadi pelaku bullying yang Rendah Dan anda berpotensi rendah menjadi pelaku bullying. Sebagian Tindakan anda mencerminkan perilaku bullying tetapi masih dalam taraf rendah',
+                                    '${data["murid"]["nama_murid"]} memiliki kecenderungan menjadi korban bullying yang Rendah Dan anda berpotensi rendah menjadi korban bullying.',
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.normal,
@@ -467,15 +468,15 @@ class LaporanHasil extends StatelessWidget {
                             ],
                           ),
                           Container(
-                            padding: EdgeInsets.only(bottom: 40),
+                            padding: EdgeInsets.only(bottom: 30),
                             child: Row(
                               children: [
-                                if (data['skor_total_pelaku'] >= 35)
+                                if (data['skor_total_korban'] >= 35)
                                   Container(
                                     padding: EdgeInsets.only(left: 20),
                                     width: 300,
                                     child: Text(
-                                      'Karena anda termasuk dalam kategori berpotensi Tinggi menjadi Pelaku bullying, sebaiknya anda segera temui konselor anda dan mengkonsultasikan hal ini kepada konselor',
+                                      'Karena anda termasuk dalam kategori berpotensi Tinggi menjadi Korban bullying, sebaiknya anda segera temui konselor anda dan mengkonsultasikan hal ini kepada konselor',
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.normal,
@@ -483,13 +484,13 @@ class LaporanHasil extends StatelessWidget {
                                       ),
                                     ),
                                   )
-                                else if (data['skor_total_pelaku'] >= 24 &&
-                                    data['skor_total_pelaku'] < 35)
+                                else if (data['skor_total_korban'] >= 24 &&
+                                    data['skor_total_korban'] < 35)
                                   Container(
                                     padding: EdgeInsets.only(left: 20),
                                     width: 300,
                                     child: Text(
-                                      'Karena anda termasuk dalam kategori berpotensi Sedang menjadi Pelaku bullying, sebaiknya anda segera temui konselor anda dan mengkonsultasikan hal ini kepada konselor',
+                                      'Karena anda termasuk dalam kategori berpotensi Sedang menjadi Korban bullying, sebaiknya anda segera temui konselor anda dan mengkonsultasikan hal ini kepada konselor',
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.normal,
@@ -502,7 +503,7 @@ class LaporanHasil extends StatelessWidget {
                                     padding: EdgeInsets.only(left: 20),
                                     width: 300,
                                     child: Text(
-                                      'Karena anda termasuk dalam kategori berpotensi rendah menjadi Pelaku bullying, sebaiknya anda segera temui konselor anda dan mengkonsultasikan hal ini kepada konselor',
+                                      'Karena anda termasuk dalam kategori berpotensi rendah menjadi Korban bullying, sebaiknya anda segera temui konselor anda dan mengkonsultasikan hal ini kepada konselor',
                                       style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.normal,

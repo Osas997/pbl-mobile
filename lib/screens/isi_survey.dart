@@ -1,134 +1,130 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
-import 'package:survey_bullyng/provider/murid.dart';
-import 'package:survey_bullyng/screens/laporan_hasil.dart';
-import 'package:survey_bullyng/screens/murid_home.dart';
+import 'package:survey_bullyng/provider/murid_provider.dart';
+import 'package:survey_bullyng/provider/pertanyaan_provider.dart';
+import 'package:survey_bullyng/provider/survey_provider.dart';
+import 'package:survey_bullyng/widgets/question.dart';
 
-// void main() {
-//   runApp(MaterialApp(
-//     home: SurveyPage(),
-//   ));
-// }
-
-class SurveyPage extends StatefulWidget {
-  @override
+class SurveyPage extends StatelessWidget {
   static const routeName = '/isi-survey';
-  _SurveyPageState createState() => _SurveyPageState();
-}
-
-class _SurveyPageState extends State<SurveyPage> {
-  List<String> questions = [
-    'Apakah Anda pernah menjadi korban bullying?',
-    'Apakah Anda pernah melihat bullying terjadi?',
-    'Apakah Anda menyadari kasus bullying di sekitar Anda?',
-    'Bagaimana sikap Anda terhadap kasus bullying?',
-  ];
-
-  List<int?> questionValues = List.filled(4, null);
+  const SurveyPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    print(Provider.of<MuridProvider>(context).murid);
     return Scaffold(
       appBar: AppBar(
         title: Text('Survey Bullying'),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(questions.length, (index) {
-            return buildQuestion(
-              questionText: questions[index],
-              value: questionValues[index],
-              onChanged: (value) {
-                setState(() {
-                  questionValues[index] = value;
-                });
-              },
+      body: FutureBuilder(
+        future: Provider.of<PertanyaanProvider>(context, listen: false)
+            .getPertanyaan(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            EasyLoading.show(
+              status: 'loading...',
             );
-          }).toList(),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (questionValues.contains(null)) {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text('Peringatan'),
-                  content: Text('Silakan lengkapi semua pertanyaan.'),
-                  actions: [
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
+            return Container();
+          } else if (snapshot.hasError) {
+            // Error state
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
             );
           } else {
-            // Lakukan sesuatu dengan nilai jawaban
-            // Misalnya, kirim jawaban ke server atau tampilkan hasilnya
-            questionValues.forEach((value) {
-              print('Jawaban: $value');
-            });
-            Navigator.of(context).pushNamed(
-              LaporanHasil.routeName,
-            );
+            EasyLoading.dismiss();
+            return SurveyForm();
           }
         },
-        child: Icon(Icons.send),
       ),
     );
   }
+}
 
-  Widget buildQuestion({
-    required String questionText,
-    required int? value,
-    required ValueChanged<int?> onChanged,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          questionText,
-          style: TextStyle(fontSize: 18.0),
-        ),
-        SizedBox(height: 8.0),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            RadioListTile<int>(
-              title: Text('Sangat Sering'),
-              value: 4,
-              groupValue: value,
-              onChanged: onChanged,
+class SurveyForm extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final pertanyaanProvider =
+        Provider.of<PertanyaanProvider>(context, listen: false);
+    final muridProvider = Provider.of<MuridProvider>(context, listen: false);
+
+    print(muridProvider.murid.idSekolah);
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...List.generate(pertanyaanProvider.dataPertanyaan.length, (index) {
+            return Consumer<SurveyProvider>(
+              builder: (context, surveyProvider, child) {
+                return buildQuestion(
+                  questionText: pertanyaanProvider
+                      .dataPertanyaan[index].pertanyaan
+                      .toString(),
+                  value: surveyProvider.survey[index]['skor'],
+                  onChanged: (value) {
+                    surveyProvider.isiSurvey(
+                      idPertanyaan: pertanyaanProvider.dataPertanyaan[index].id
+                          .toString(),
+                      skor: value!,
+                      tipePertanyaan: pertanyaanProvider
+                          .dataPertanyaan[index].tipePertanyaan
+                          .toString(),
+                      index: index,
+                    );
+                  },
+                );
+              },
+            );
+          }).toList(),
+          SizedBox(
+            height: 20,
+          ),
+          Center(
+            child: Consumer<SurveyProvider>(
+              builder: (context, surveyProvider, _) => Container(
+                  width: 200,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      bool isAllQuestionsAnswered = surveyProvider.survey
+                          .every((survey) => survey['skor'] != null);
+
+                      if (isAllQuestionsAnswered) {
+                        await surveyProvider.submitSurvey(
+                            context, muridProvider.murid);
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Peringatan'),
+                              content:
+                                  Text('Silakan lengkapi semua pertanyaan.'),
+                              actions: [
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: Text('Submit'),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                  )),
             ),
-            RadioListTile<int>(
-              title: Text('Sering'),
-              value: 3,
-              groupValue: value,
-              onChanged: onChanged,
-            ),
-            RadioListTile<int>(
-              title: Text('Jarang'),
-              value: 2,
-              groupValue: value,
-              onChanged: onChanged,
-            ),
-            RadioListTile<int>(
-              title: Text('Tidak Pernah'),
-              value: 1,
-              groupValue: value,
-              onChanged: onChanged,
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 }

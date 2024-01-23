@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:survey_bullyng/provider/auth_provider.dart';
-import 'package:survey_bullyng/screens/murid_home.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
@@ -103,16 +103,14 @@ class LoginPage extends StatelessWidget {
                   return ElevatedButton(
                     onPressed: () async {
                       if (authProvider.formKey.currentState!.validate()) {
+                        EasyLoading.show(status: 'loading...');
+
                         await auth.login(context);
-                        if (auth.isLoggedIn) {
-                          Navigator.of(context)
-                              .pushReplacementNamed(MuridHome.routeName);
-                        }
+
+                        EasyLoading.dismiss();
                       }
                     },
-                    child: auth.isLoading
-                        ? CircularProgressIndicator()
-                        : Text('Login'),
+                    child: Text('Login'),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
